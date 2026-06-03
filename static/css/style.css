@@ -154,7 +154,6 @@ body {
 .logo-img {
   width: 24px;
   height: 24px;
-  filter: brightness(0) saturate(100%) invert(52%) sepia(99%) saturate(1000%) hue-rotate(319deg) brightness(105%);
 }
 
 .logo-text {
