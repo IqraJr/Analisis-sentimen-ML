@@ -1087,6 +1087,15 @@ body {
   color: var(--color-slate-200);
 }
 
+.nav-item.logout-btn:hover {
+  background: var(--color-ember-dark);
+  color: var(--color-ember-red);
+}
+
+.nav-item.logout-btn:hover svg {
+  color: var(--color-ember-red);
+}
+
 .sidebar-footer {
   padding: var(--spacing-16) var(--spacing-16);
   border-top: 1px solid var(--color-graphite-600);
@@ -1842,4 +1851,239 @@ body {
     padding: var(--spacing-24);
     border-radius: var(--radius-cards);
   }
+}
+
+/* ==========================================================================
+   16. ADMINISTRATOR LOGIN SCREEN
+   Frosted glass verification card with responsive layout & floating orbs
+   ========================================================================== */
+.login-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-void-black);
+  font-family: var(--font-inter);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-body .glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.login-body .orb-1 {
+  width: 350px;
+  height: 350px;
+  background: var(--gradient-violet-haze);
+  top: 15%;
+  left: 10%;
+}
+
+.login-body .orb-2 {
+  width: 450px;
+  height: 450px;
+  background: var(--gradient-nebula-glow);
+  bottom: 10%;
+  right: 5%;
+}
+
+.login-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 420px;
+  padding: var(--spacing-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+}
+
+.login-brand {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-logo {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--spacing-16);
+}
+
+.login-brand h2 {
+  font-size: var(--text-heading-sm);
+  font-weight: 700;
+  color: var(--color-snow);
+  letter-spacing: -0.02em;
+  font-family: var(--font-inter);
+}
+
+.login-brand p {
+  font-size: 13px;
+  color: var(--color-slate-200);
+  margin-top: 4px;
+}
+
+.login-card.glass-panel {
+  background: rgba(17, 18, 20, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-cardlarge);
+  padding: var(--spacing-32);
+  box-shadow: var(--shadow-xl);
+  transition: transform var(--transition-base), border-color var(--transition-fast);
+}
+
+.login-card-header {
+  margin-bottom: var(--spacing-24);
+}
+
+.login-card-header h3 {
+  font-size: var(--text-subheading);
+  font-weight: 600;
+  color: var(--color-snow);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.login-card-header p {
+  font-size: 13px;
+  color: var(--color-slate-300);
+  line-height: 1.5;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+}
+
+.login-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-slate-200);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  display: block;
+  margin-bottom: var(--spacing-8);
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-graphite-500);
+  border-radius: var(--radius-inputs);
+  padding: 12px 42px 12px 14px;
+  color: var(--color-snow);
+  font-family: var(--font-inter);
+  font-size: 14px;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.password-input-wrapper input:focus {
+  border-color: var(--color-graphite-400);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.04);
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--color-slate-300);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.password-toggle-btn:hover {
+  color: var(--color-snow);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.password-toggle-btn .eye-icon {
+  stroke: currentColor;
+}
+
+.login-error-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 99, 99, 0.08);
+  border: 1px solid rgba(255, 99, 99, 0.2);
+  border-radius: var(--radius-inputs);
+  font-size: 13px;
+  color: var(--color-ember-red);
+  animation: fadeIn 0.2s ease;
+}
+
+.login-error-msg svg {
+  flex-shrink: 0;
+  color: var(--color-ember-red);
+}
+
+.login-back-link {
+  text-align: center;
+  margin-top: var(--spacing-8);
+}
+
+.login-back-link a {
+  font-size: 13px;
+  color: var(--color-slate-200);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.login-back-link a:hover {
+  color: var(--color-snow);
+}
+
+/* Animations for Login Card */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.shake-anim {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes floatOrb1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.05); }
+}
+
+@keyframes floatOrb2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 30px) scale(0.95); }
+}
+
+.float-orb-1 { animation: floatOrb1 10s ease-in-out infinite; }
+.float-orb-2 { animation: floatOrb2 12s ease-in-out infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

@@ -1,13 +1,25 @@
 import os
 import sqlite3
 import pickle
+from functools import wraps
 import numpy as np
 import scipy.sparse as sp
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 
 from utils.nlp_helper import clean_text
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'suara-mahasiswa-secret-key-12345')
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            if request.path.startswith('/api/'):
+                return jsonify({"status": "error", "message": "Unauthorized. Silakan login terlebih dahulu."}), 401
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 DATABASE = 'database.db'
 
 # ==========================================
@@ -101,9 +113,34 @@ else:
 def home():
     return render_template('index.html')
 
+@app.route('/login')
+def login():
+    if session.get('logged_in'):
+        return redirect(url_for('admin'))
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
 @app.route('/admin')
+@login_required
 def admin():
     return render_template('dashboard.html')
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.get_json()
+    if not data or 'password' not in data:
+        return jsonify({"status": "error", "message": "Kata sandi wajib diisi"}), 400
+    
+    password = data['password']
+    if password == 'admin123':
+        session['logged_in'] = True
+        return jsonify({"status": "success", "message": "Login berhasil"})
+    
+    return jsonify({"status": "error", "message": "Kata sandi salah!"}), 401
 
 # ==========================================
 # 4. REST API ENDPOINTS
@@ -166,6 +203,7 @@ def submit_feedback():
 
 # Get feedback list with search and filters
 @app.route('/api/feedbacks', methods=['GET'])
+@login_required
 def get_feedbacks():
     search_query = request.args.get('search', '').strip()
     sentiment_filter = request.args.get('sentiment', 'all').strip()
@@ -199,6 +237,7 @@ def get_feedbacks():
 
 # Update feedback status
 @app.route('/api/feedbacks/<int:item_id>/status', methods=['PUT'])
+@login_required
 def update_status(item_id):
     data = request.get_json()
     if not data or 'status' not in data:
@@ -224,6 +263,7 @@ def update_status(item_id):
 
 # Update admin resolution notes
 @app.route('/api/feedbacks/<int:item_id>/notes', methods=['PUT'])
+@login_required
 def update_notes(item_id):
     data = request.get_json()
     notes = data.get('admin_notes', '').strip() if data else ''
@@ -244,6 +284,7 @@ def update_notes(item_id):
 
 # Delete feedback entry
 @app.route('/api/feedbacks/<int:item_id>', methods=['DELETE'])
+@login_required
 def delete_feedback(item_id):
     try:
         conn = get_db_connection()
@@ -261,6 +302,7 @@ def delete_feedback(item_id):
 
 # Get stats for charts
 @app.route('/api/stats', methods=['GET'])
+@login_required
 def get_stats():
     try:
         conn = get_db_connection()
