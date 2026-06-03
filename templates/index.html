@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suara Mahasiswa - Portal Ulasan & Aspirasi Kampus</title>
+    
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="student-body">
+    <!-- Glassmorphism Background Elements -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    
+    <header class="app-header">
+        <div class="container header-container">
+            <div class="logo-area">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo-img">
+                <span class="logo-text">Suara<span>Mahasiswa</span></span>
+            </div>
+            <nav class="nav-links">
+                <a href="/" class="nav-link active">Kirim Ulasan</a>
+                <a href="/admin" class="nav-link admin-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                    Dashboard Admin
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <section class="hero-section">
+            <h1 class="hero-title">Sampaikan Aspirasi Anda demi <span class="gradient-text">Kampus Lebih Baik</span></h1>
+            <p class="hero-subtitle">Tuliskan ulasan Anda mengenai fasilitas, layanan akademik, atau kenyamanan kampus. Sistem AI kami akan menganalisis sentimen Anda secara langsung.</p>
+        </section>
+
+        <section class="form-section">
+            <div class="feedback-card glass-panel">
+                <div class="card-header">
+                    <h2>Tulis Ulasan Baru</h2>
+                    <span class="badge badge-info">Analisis Real-Time</span>
+                </div>
+                
+                <form id="feedbackForm" class="feedback-form">
+                    <div class="form-group">
+                        <label for="reviewText">Ulasan atau Keluhan Anda</label>
+                        <textarea 
+                            id="reviewText" 
+                            name="text" 
+                            placeholder="Contoh: AC di ruang kelas G.302 mati sejak minggu lalu. Sangat panas saat perkuliahan..." 
+                            rows="5"
+                            required
+                        ></textarea>
+                        
+                        <div class="textarea-footer">
+                            <span class="suggestions-label">Saran Topik:</span>
+                            <div class="suggestion-chips">
+                                <span class="chip" data-text="Wi-Fi di perpustakaan sangat lambat dan sering putus.">📶 Wi-Fi Lambat</span>
+                                <span class="chip" data-text="AC di ruang kelas G.302 mati sejak minggu lalu. Sangat panas saat perkuliahan.">❄️ AC Mati</span>
+                                <span class="chip" data-text="Pelayanan administrasi di rektorat sangat berbelit-belit dan lambat.">📄 Admin Lambat</span>
+                                <span class="chip" data-text="Perpustakaan pusat sangat nyaman untuk belajar dan bersih.">📚 Perpus Nyaman</span>
+                            </div>
+                            <div class="char-counter">
+                                <span id="charCount">0</span> / 500 karakter
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn btn-primary">
+                        <span class="btn-text">Kirim & Analisis Sentimen</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Sentiment Result Display Card (Initially Hidden) -->
+            <div id="resultCard" class="result-card glass-panel hidden">
+                <div class="result-header">
+                    <h3>Hasil Analisis Sentimen AI</h3>
+                    <button id="closeResultBtn" class="close-btn">&times;</button>
+                </div>
+                
+                <div class="result-body">
+                    <div class="sentiment-indicator-wrapper">
+                        <div id="sentimentEmoji" class="sentiment-emoji">🤔</div>
+                        <div>
+                            <div class="sentiment-label-subtitle">Sentimen Terdeteksi</div>
+                            <div id="sentimentLabel" class="sentiment-label">Menganalisis...</div>
+                        </div>
+                    </div>
+
+                    <div class="sentiment-scores-container">
+                        <h4 class="scores-title">Skor Probabilitas Keyakinan</h4>
+                        
+                        <!-- Positif Bar -->
+                        <div class="score-row">
+                            <div class="score-info">
+                                <span class="score-name">👍 Positif</span>
+                                <span id="probPosVal" class="score-pct">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="probPosBar" class="progress-bar bar-positive" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Netral Bar -->
+                        <div class="score-row">
+                            <div class="score-info">
+                                <span class="score-name">😐 Netral</span>
+                                <span id="probNeuVal" class="score-pct">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="probNeuBar" class="progress-bar bar-neutral" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Negatif Bar -->
+                        <div class="score-row">
+                            <div class="score-info">
+                                <span class="score-name">👎 Negatif</span>
+                                <span id="probNegVal" class="score-pct">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="probNegBar" class="progress-bar bar-negative" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-footer">
+                        <div class="info-alert">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            <span>Ulasan Anda telah disimpan ke basis data admin untuk ditindaklanjuti. Terima kasih!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; 2026 Portal Suara Mahasiswa. Powered by NLP Logistic Regression Model.</p>
+    </footer>
+
+    <!-- JS Link -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

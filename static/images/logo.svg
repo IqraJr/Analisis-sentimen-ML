@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+    <filter id="logo-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#4f46e5" flood-opacity="0.15" />
+    </filter>
+  </defs>
+  
+  <!-- Outer Speech Bubble / Communication Shape -->
+  <path d="M50,15 C28,15 15,26 15,45 C15,55 21,65 30,71 L26,87 L43,80 C45.3,80.3 47.6,80.5 50,80.5 C72,80.5 85,69.5 85,50.5 C85,31.5 72,15 50,15 Z" 
+        fill="url(#logo-grad)" 
+        filter="url(#logo-shadow)"/>
+        
+  <!-- Graduation Cap Icon Inside -->
+  <!-- Cap Diamond Shape -->
+  <polygon points="50,33 70,41 50,49 30,41" fill="#ffffff" />
+  
+  <!-- Cap Skull Base -->
+  <path d="M38,46 L38,55 C38,58.3 43.4,61 50,61 C56.6,61 62,58.3 62,55 L62,46" fill="#f1f5f9" />
+  
+  <!-- Cap Tassel -->
+  <path d="M50,41 L66,45 L66,54" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="66" cy="55" r="2" fill="#e2e8f0" />
+</svg>

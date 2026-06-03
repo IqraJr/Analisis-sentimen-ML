@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Suara Mahasiswa</title>
+    
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-body">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Logo" class="logo-img">
+            <span class="logo-text">Admin<span>Portal</span></span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Portal Mahasiswa
+            </a>
+            <a href="/admin" class="nav-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                Dashboard Utama
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Sentimen Analyzer v1.0</p>
+        </div>
+    </aside>
+
+    <!-- Main Admin Area -->
+    <div class="admin-main">
+        <header class="admin-header">
+            <div class="admin-header-title">
+                <h1>Dasbor Analisis Sentimen</h1>
+                <p>Rekapitulasi berkas aspirasi dan aduan mahasiswa</p>
+            </div>
+            <div class="admin-user-profile">
+                <div class="avatar">AD</div>
+                <div class="profile-info">
+                    <span class="profile-name">Administrator</span>
+                    <span class="profile-role">Rektorat Kampus</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-content">
+            <!-- Stats Cards Grid -->
+            <section class="stats-grid">
+                <div class="stat-card glass-panel count-total">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-details">
+                        <span class="stat-label">Total Ulasan</span>
+                        <h3 id="statTotal">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel count-positive">
+                    <div class="stat-icon">👍</div>
+                    <div class="stat-details">
+                        <span class="stat-label">Ulasan Positif</span>
+                        <h3 id="statPositive">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel count-neutral">
+                    <div class="stat-icon">😐</div>
+                    <div class="stat-details">
+                        <span class="stat-label">Ulasan Netral</span>
+                        <h3 id="statNeutral">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel count-negative">
+                    <div class="stat-icon">👎</div>
+                    <div class="stat-details">
+                        <span class="stat-label">Ulasan Negatif</span>
+                        <h3 id="statNegative">0</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="chart-container glass-panel">
+                    <h3>Proporsi Sentimen</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container glass-panel">
+                    <h3>Status Tindak Lanjut</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Table Section -->
+            <section class="table-section glass-panel">
+                <div class="table-header">
+                    <h2>Daftar Aspirasi Mahasiswa</h2>
+                    
+                    <!-- Search and Filters Panel -->
+                    <div class="filter-panel">
+                        <div class="search-box-wrapper">
+                            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="searchFilter" placeholder="Cari isi ulasan...">
+                        </div>
+                        
+                        <div class="select-wrapper">
+                            <select id="sentimentFilter">
+                                <option value="all">Semua Sentimen</option>
+                                <option value="positif">👍 Positif</option>
+                                <option value="netral">😐 Netral</option>
+                                <option value="negatif">👎 Negatif</option>
+                            </select>
+                        </div>
+                        
+                        <div class="select-wrapper">
+                            <select id="statusFilter">
+                                <option value="all">Semua Status</option>
+                                <option value="Pending">🕒 Pending</option>
+                                <option value="Diproses">⚙️ Diproses</option>
+                                <option value="Selesai">✅ Selesai</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th style="width: 40%">Isi Ulasan</th>
+                                <th>Sentimen</th>
+                                <th>Kemiripan Probabilitas</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <tr>
+                                <td colspan="6" class="table-loading">Memuat data aduan...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Details/Resolution Modal -->
+    <div id="detailsModal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Tindak Lanjut Aspirasi</h2>
+                <button id="closeModalBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label>Isi Ulasan Mahasiswa</label>
+                    <div id="modalRawText" class="modal-text-block"></div>
+                </div>
+
+                <div class="modal-two-columns">
+                    <div class="modal-field">
+                        <label>Hasil Sentimen AI</label>
+                        <div id="modalSentimentBadge" style="margin-top: 5px;"></div>
+                    </div>
+                    
+                    <div class="modal-field">
+                        <label>Ubah Status Tindak Lanjut</label>
+                        <div class="select-wrapper" style="margin-top: 5px; width: 100%;">
+                            <select id="modalStatusSelect" style="width: 100%;">
+                                <option value="Pending">🕒 Pending</option>
+                                <option value="Diproses">⚙️ Diproses</option>
+                                <option value="Selesai">✅ Selesai</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-field">
+                    <label>Distribusi Keyakinan Model</label>
+                    <div class="modal-prob-bars">
+                        <!-- Positive -->
+                        <div class="modal-prob-row">
+                            <span class="bar-lbl">Positif</span>
+                            <div class="progress-bar-bg">
+                                <div id="modalProbPosBar" class="progress-bar bar-positive" style="width: 0%"></div>
+                            </div>
+                            <span id="modalProbPosVal" class="bar-pct">0%</span>
+                        </div>
+                        <!-- Neutral -->
+                        <div class="modal-prob-row">
+                            <span class="bar-lbl">Netral</span>
+                            <div class="progress-bar-bg">
+                                <div id="modalProbNeuBar" class="progress-bar bar-neutral" style="width: 0%"></div>
+                            </div>
+                            <span id="modalProbNeuVal" class="bar-pct">0%</span>
+                        </div>
+                        <!-- Negative -->
+                        <div class="modal-prob-row">
+                            <span class="bar-lbl">Negatif</span>
+                            <div class="progress-bar-bg">
+                                <div id="modalProbNegBar" class="progress-bar bar-negative" style="width: 0%"></div>
+                            </div>
+                            <span id="modalProbNegVal" class="bar-pct">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-field">
+                    <label for="modalNotesText">Catatan Resolusi / Tindak Lanjut Admin</label>
+                    <textarea id="modalNotesText" placeholder="Tuliskan tindakan yang akan/telah diambil..." rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="modalItemId">
+                <button id="deleteBtn" class="btn btn-danger">Hapus Aduan</button>
+                <button id="saveChangesBtn" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="toast hidden">
+        <span class="toast-icon">✅</span>
+        <span id="toastMsg" class="toast-message">Pesan notifikasi</span>
+    </div>
+
+    <!-- JS Link -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
