@@ -216,87 +216,360 @@ body {
 }
 
 .main-content {
-  padding-top: calc(52px + var(--spacing-80));
+  padding-top: 52px; /* only navbar height — hero owns its own top spacing */
   padding-bottom: var(--spacing-120);
 }
 
 /* ==========================================================================
-   6. Hero Section
+   6. Hero Section — Premium Layered Background
    ========================================================================== */
-.hero-section {
+
+/* ---- Full-width hero wrapper (breaks out of .container) ---- */
+.hero-outer {
   position: relative;
-  text-align: center;
-  padding: var(--spacing-64) 0 var(--spacing-80);
+  width: 100%;
   overflow: hidden;
+  /* generous height so the atmosphere has room to breathe */
+  padding: 100px 0 80px;
 }
 
-.hero-section::before {
+/* ---- Layer 1: Deep base + radial nebula bloom (blue + violet) ---- */
+.hero-outer::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--gradient-nebula-glow);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%,  rgba(4,  63, 150, 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 15% 60%,  rgba(82, 48, 145, 0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 85% 70%,  rgba(19,138, 242, 0.12) 0%, transparent 60%),
+    var(--surface-canvas);
   pointer-events: none;
   z-index: 0;
 }
 
+/* ---- Layer 2: Dot-grid pattern (SVG inline data URI) ---- */
+.hero-outer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 30%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 30%, black 20%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- Layer 3: Floating orbs (pseudo on inner content wrapper) ---- */
+.hero-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0;
+  animation: orbFloat 8s ease-in-out infinite;
+}
+
+.hero-orb-1 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(19, 138, 242, 0.22) 0%, transparent 70%);
+  top: -120px;
+  left: calc(50% - 380px);
+  animation-delay: 0s;
+  animation-duration: 10s;
+}
+
+.hero-orb-2 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(82, 48, 145, 0.20) 0%, transparent 70%);
+  top: 20px;
+  right: calc(50% - 380px);
+  animation-delay: -4s;
+  animation-duration: 12s;
+}
+
+.hero-orb-3 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(86, 194, 255, 0.14) 0%, transparent 70%);
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: -2s;
+  animation-duration: 9s;
+}
+
+@keyframes orbFloat {
+  0%   { opacity: 1; transform: translateY(0px) scale(1); }
+  33%  { opacity: 1; transform: translateY(-18px) scale(1.03); }
+  66%  { opacity: 1; transform: translateY(10px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0px) scale(1); }
+}
+
+/* orb-1 & orb-2 don't start at 0,0 so kill the initial transform conflict */
+.hero-orb-1 { animation-name: orbFloat1; }
+.hero-orb-2 { animation-name: orbFloat2; }
+
+@keyframes orbFloat1 {
+  0%   { opacity: 1; transform: translateY(0px); }
+  50%  { opacity: 1; transform: translateY(-22px); }
+  100% { opacity: 1; transform: translateY(0px); }
+}
+@keyframes orbFloat2 {
+  0%   { opacity: 1; transform: translateY(0px); }
+  50%  { opacity: 1; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0px); }
+}
+
+/* ---- Hero inner content ---- */
+.hero-section {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-24);
+}
+
+/* ---- Animated badge ---- */
 .hero-badge {
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: var(--surface-overlay);
-  border: 1px solid var(--color-graphite-500);
-  border-radius: var(--radius-badges);
-  padding: 4px 10px;
+  gap: 8px;
+  background: rgba(27, 28, 30, 0.8);
+  border: 1px solid rgba(86, 194, 255, 0.2);
+  border-radius: 99px;
+  padding: 5px 14px 5px 10px;
   font-size: 11px;
   font-weight: 500;
   color: var(--color-slate-200);
   letter-spacing: 0.048px;
   margin-bottom: var(--spacing-24);
   font-family: var(--font-mono);
+  box-shadow: 0 0 0 1px rgba(86,194,255,0.06), 0 0 20px 0 rgba(19,138,242,0.12);
+  animation: badgeEntry 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .hero-badge .dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   background: var(--color-mint-signal);
   border-radius: 99999px;
   flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(89,212,153,0.8);
+  animation: dotPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+@keyframes badgeEntry {
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ---- Title with text glow anchor ---- */
+.hero-title-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+/* Soft glow bloom behind the headline */
+.hero-title-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -40px -60px;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(19,138,242,0.13) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .hero-title {
   position: relative;
   z-index: 1;
-  font-size: clamp(36px, 5vw, var(--text-heading-lg));
+  font-size: clamp(38px, 5.5vw, var(--text-heading-lg));
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.11px;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
   color: var(--color-snow);
   margin-bottom: var(--spacing-16);
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
+  animation: heroTitleEntry 0.7s 0.1s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@keyframes heroTitleEntry {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .gradient-text {
-  background: var(--gradient-sky-signal);
+  background: linear-gradient(135deg, #56c2ff 0%, #138af2 45%, #a78bfa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  /* subtle shimmer animation */
+  background-size: 200% 100%;
+  animation: shimmerText 5s ease-in-out infinite;
+}
+
+@keyframes shimmerText {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
 }
 
 .hero-subtitle {
   position: relative;
   z-index: 1;
-  font-size: var(--text-subheading);
+  font-size: 17px;
   font-weight: 400;
   color: var(--color-slate-200);
-  line-height: 1.4;
-  letter-spacing: 0.06px;
-  max-width: 540px;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  max-width: 500px;
   margin: 0 auto var(--spacing-40);
+  animation: heroTitleEntry 0.7s 0.2s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
+
+/* ==========================================================================
+   6b. Hero Stats Strip
+   ========================================================================== */
+.hero-stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: var(--spacing-40);
+  animation: heroTitleEntry 0.7s 0.3s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.hero-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 32px;
+  border-right: 1px solid var(--color-graphite-600);
+}
+
+.hero-stat-item:last-child {
+  border-right: none;
+}
+
+.hero-stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-snow);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-feature-settings: 'tnum';
+}
+
+.hero-stat-value.live {
+  color: var(--color-sky-signal);
+}
+
+.hero-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-slate-300);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   6c. Hero Sentiment Preview Ticker
+   ========================================================================== */
+.hero-preview {
+  position: relative;
+  z-index: 1;
+  margin-bottom: var(--spacing-48);
+  animation: heroTitleEntry 0.7s 0.4s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.hero-preview-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-slate-300);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+}
+
+.hero-preview-track {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  /* fade edges */
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.hero-preview-inner {
+  display: flex;
+  gap: 10px;
+  width: max-content;
+  animation: tickerScroll 28s linear infinite;
+}
+
+.hero-preview-inner:hover {
+  animation-play-state: paused;
+}
+
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.preview-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-graphite-600);
+  border-radius: 99px;
+  padding: 6px 14px;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--color-slate-200);
+  backdrop-filter: blur(4px);
+  transition: border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.preview-pill:hover {
+  border-color: var(--color-graphite-500);
+}
+
+.preview-pill .pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.preview-pill .pill-dot.pos { background: var(--color-mint-signal); box-shadow: 0 0 4px rgba(89,212,153,0.6); }
+.preview-pill .pill-dot.neu { background: var(--color-sky-signal);  box-shadow: 0 0 4px rgba(86,194,255,0.6); }
+.preview-pill .pill-dot.neg { background: var(--color-ember-red);   box-shadow: 0 0 4px rgba(255,99,99,0.6); }
 
 /* ==========================================================================
    7. Feedback Form Card (Student)
