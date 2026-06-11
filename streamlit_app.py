@@ -90,7 +90,7 @@ st.set_page_config(
 )
 
 # Sidebar Branding
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/2/28/Logo_uho.png", width=100, error_handling="skip")
+st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/2/28/Logo_uho.png", width=100)
 st.sidebar.title("Suara UHO")
 st.sidebar.write("Sistem Aspirasi & Analisis Sentimen Mahasiswa Universitas Halu Oleo")
 
